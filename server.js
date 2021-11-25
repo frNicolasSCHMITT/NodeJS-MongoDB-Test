@@ -5,6 +5,11 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
 const MongoClient = require("mongodb").MongoClient;
+const mongodb = require("mongodb");
+
+app.use(express.static("public"));
+
+app.use(bodyParser.json());
 
 // connect to DB
 
@@ -43,6 +48,21 @@ MongoClient.connect(
         .then((result) => {
           console.log(result);
           res.redirect("/");
+        })
+        .catch((error) => console.error(error));
+    });
+
+    // delete
+    app.delete("/quotes", (req, res) => {
+      console.log("ID: " + req.body._id);
+      let delete_id = req.body._id;
+
+      quotesCollection
+        .deleteOne({
+          _id: new mongodb.ObjectId(delete_id.toString()),
+        })
+        .then((result) => {
+          res.json(`Deleted quote`);
         })
         .catch((error) => console.error(error));
     });
